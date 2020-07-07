@@ -36,7 +36,29 @@ class Timer():
         return f'---- Timer object: TZ = {self.tz} ----'
     
 def make_model(layers_=None, units_=[20, 10, 3], acts_=[None, 'relu', 'softmax'], loss_='categorical_crossentropy', opt='adam', mets=['accuracy'], cust_emb=None, dropout=0.3, kern_reg=None, bidirect_1=False, n_words=20000, embed_size=128):
-    
+    """Builds and compiles a trainable Keras Sequential model for NLP tasks. There are mulitple
+       tunable parameters with respect to layout, but it is meant to create an embedding layer 
+       followed by one LSTM and one output layer at minimum.
+
+    Args:
+        layers_ ([list], optional): Must be list of Keras layers. Ex: [LSTM, Dense] Defaults to None.
+        units_ (list, optional): Amount of desired neurons in each layer. Defaults to [20, 10, 3].
+        acts_ (list, optional): Acitivation functions to be used. First layer must be None. Defaults to [None, 'relu', 'softmax'].
+        loss_ (str, optional): Desired Keras compatible loss function. Defaults to 'categorical_crossentropy'.
+        opt (str, optional): Desired Keras compatible optimizer. Defaults to 'adam'.
+        mets (list, optional): Desired Keras compatible metric(s). Defaults to ['accuracy'].
+        cust_emb (Keras Embedding, optional): Must be pre-made Keras Embedding layer (or equivalent). 
+            'None' creates trainable embeddings set to 'embed_size'. Defaults to None.
+        dropout (float, optional): Total amount of dropout desired *per layer*. Set to 0 to disable. Defaults to 0.3.
+        kern_reg (str, optional): Desired Keras compatible kernel regularizer. Defaults to None.
+        bidirect_1 (bool, optional): Enables 1st LSTM layer to be bi-directional. Defaults to False.
+        n_words (int, optional): Number of words to be used in dimensions of trainable embedding layer. Defaults to 20000.
+        embed_size (int, optional): Setting dimensionality of the learning space for trainable embedding layer. Defaults to 128.
+
+    Returns:
+        keras.model: Fully compiled Keras model ready for training [.fit()]
+    """
+
     from keras.layers import LSTM, Dense, Embedding, Dropout, GlobalAveragePooling1D, Bidirectional
     from keras.models import Sequential
     
@@ -98,7 +120,17 @@ def make_model(layers_=None, units_=[20, 10, 3], acts_=[None, 'relu', 'softmax']
     return model
 
 def plot_confusion_matrix(cm, classes, cmap=None):
-    
+    """Converts Sklearn confusion matrix into clean matplotlib plot. Can customize colors if desired.
+
+    Args:
+        cm (Confusion Matrix): Designed to take in output from sklearn.metrics.confusion_matrix
+        classes (list): Labels (as str) to be used on axes of cm
+        cmap (Colormap, optional): Must be Matplotlib compatible colormap. 'None' will select 'plt.cm.BuPu'. Defaults to None.
+
+    Returns:
+        Confustion Matrix: Matplotlib figure, axis with pretty-fied normalized confusion martix
+    """
+
     ## Major code components pulled from: 
     ## https://github.com/learn-co-students/dsc-visualizing-confusion-matrices-lab-online-ds-pt-100719
     
@@ -135,6 +167,31 @@ def plot_confusion_matrix(cm, classes, cmap=None):
     return None
 
 def evaluate_model(model, X_tr, X_te, y_tr, y_te, time_obj, batch=64, epch=10, val_split=0.3, callb=None, plot=True, cls_labels=None, keep=False):
+    """Designed to quickly train, produce and visualize results from a Keras neural network.
+        Option to keep results saved in history object from .fit().
+
+    Args:
+        model (Keras Model): Must be fully compiled Keras model to work properly. 
+        X_tr (iterable): Training set of features. Designed for arrays or pandas objects.
+        X_te (iterable): Test set of features. Designed for arrays or pandas objects.
+        y_tr (iterable): Training set for target(s). Designed for arrays or pandas objects.
+        y_te (iterable): Test set for for target(s). Designed for arrays or pandas objects.
+        time_obj (object): Designed for custom timer class. Copy code from this file to use.
+        batch (int, optional): Size of mini-batch to be used during training. Defaults to 64.
+        epch (int, optional): Number of epochs to train model. Defaults to 10.
+        val_split (float, optional): Proportion of training data to use for validation during 
+            training. Defaults to 0.3 (30%).
+        callb (list, optional): If used, must be list of Keras compatible callbacks such as 
+            EarlyStopping. Defaults to None.
+        plot (bool, optional): Enables plotting of accuracy and loss curves. Defaults to True.
+        cls_labels (list, optional): List of strings to be used in confusion matrix. 'None' 
+            will use labels derived from 'y_te'. Defaults to None.
+        keep (bool, optional): Enables output of Keras history object from trained model. Defaults to False.
+
+    Returns:
+        Keras model.history: Optional output. Otherwise will display visuals and return 'None'
+    """
+
     import pandas as pd
     import matplotlib.pyplot as plt
     import sklearn.metrics as metrics
@@ -202,6 +259,19 @@ def evaluate_model(model, X_tr, X_te, y_tr, y_te, time_obj, batch=64, epch=10, v
     return None
 
 def regex_cleaner(data, pattern, repl, keep=True):
+    """Helper function meant to take in regex pattern to clean text data.
+       Returns list of transformed text.
+
+    Args:
+        data (iterable): Designed with arrays and pandas objects filled with strings.
+        pattern (str): Regex formatted string. Ex: r"(w\+)".
+        repl (str): String object desired to replace captured tokens.
+        keep (bool, optional): Enables output of transformed text. Otherwise will 
+            display only. Defaults to True.
+
+    Returns:
+        list: List of transformed 'data' according to regex pattern and replacement.
+    """
     import regex
     
     ## Creating a container for results
@@ -218,6 +288,18 @@ def regex_cleaner(data, pattern, repl, keep=True):
     return results
 
 def regex_cleanse(data, patterns, repl):
+    """Operationalizes 'regex_cleaner' function for use with mulitple patterns and 
+       replacement string(s). Returns list of transformed text.
+
+    Args:
+        data (iterable): Designed with arrays and pandas objects filled with strings.
+        patterns (iterable): List of regex formatted strings. Ex: [r"(w\+)", r"(d\+)"]
+        repl (str): Can be str or list of strings corresponding to patterns for cleaning
+            text data.
+
+    Returns:
+        list: List of transformed 'data according to regex patterns and replacement(s).
+    """
     
     ## Check if lists match + setting baseline for further removal
     if len(repl) == len(patterns):
@@ -246,12 +328,37 @@ def regex_cleanse(data, patterns, repl):
             print('----Someting went wrong!----')
             
 def transform_format_img(val):
+    """Helper function for use in 'word_cloud_viz'. Converts 0 values in RGB arrays
+       into 255, so that the WordCloud function will process the mask's white areas
+       correctly.
+
+    Args:
+        val (int): Designed to help parse of nparray respresentation of .png image.
+
+    Returns:
+        int: 255 from any values of 0.
+    """
+
     if val == 0:
         return 255
     else:
         return val
     
 def word_cloud_viz(wc_list, mask_path='Twitter_logo.png', save_path='img_wc.png', sw_list=None, show_wc=True):
+    """Compiles and saves WordCloud image as .png file. Option to display in notebook.
+
+    Args:
+        wc_list (iterable): Designed with list of strings to be used in WordCloud.
+        mask_path (str, optional): File name for WordCloud mask. Defaults to 'Twitter_logo.png'.
+        save_path (str, optional): File name for WordCloud image. Defaults to 'img_wc.png'.
+        sw_list (iterable, optional): Designed with list of strings to be removed from corpus
+            prior to visualizing. Defaults to None.
+        show_wc (bool, optional): Enables inline display of WordCLoud. Defaults to True.
+
+    Returns:
+        WordCloud Image: Default will save and display WordCloud image. Set 'show_wc' to False 
+            for save-only.
+    """
     
     import numpy as np
     import matplotlib.pyplot as plt
@@ -307,7 +414,22 @@ def word_cloud_viz(wc_list, mask_path='Twitter_logo.png', save_path='img_wc.png'
     return 'Done!'
     
 def freq_dist_viz(fd_series, topn=20, stopword_extsn=None, show_fd=True, keep_sw=False):
-    
+    """Tokenize text data and prepare NLTK FreqDist for corpus. Also will display plot
+       of 'topn' most frequent tokens after stopword removal.
+
+    Args:
+        fd_series (iterable): Designed with pandas Series filled of strings.
+        topn (int, optional): Top number of tokens to display in FreqDist plot. Defaults to 20.
+        stopword_extsn (iterable, optional): List of additional stopwords beyond NLTK's
+            'stopwords' list to remove from corpus. Defaults to None.
+        show_fd (bool, optional): Enables FreqDist plotting. Defaults to True.
+        keep_sw (bool, optional): Enables output of 'stop_words' list. Defaults to False.
+
+    Returns:
+        FreqDist obj.: Returns nltk.FreqDist() of data and visualize 'topn' tokens. Optional
+                           return of stopword list used in tokenizing. 
+    """
+
     import matplotlib.pyplot as plt
     import pandas as pd
     import string
@@ -374,7 +496,25 @@ def freq_dist_viz(fd_series, topn=20, stopword_extsn=None, show_fd=True, keep_sw
         return tkn_freq
     
 def prep_text_visuals(fd_series, wc_list, topn=20, mask_path='Twitter_logo.png', save_path='img_wc.png', stopword_extsn=None, show_wc=True, show_fd=True, keep_fd=False):
-    '''wc_list = list of strings, not tokens'''
+    """Operationalizes '' and '' functions to display in one line of code. Optional return
+       of nltk.FreqDist() object from ''.
+
+    Args:
+        fd_series (iterable): Designed with pandas Series filled of strings. 
+        wc_list (iterable): Designed with list of strings to be used in WordCloud.
+        topn (int, optional): Top number of tokens to display in FreqDist plot. Defaults to 20.
+        mask_path (str, optional): File name for WordCloud mask. Defaults to 'Twitter_logo.png'.
+        save_path (str, optional): File name for WordCloud image. Defaults to 'img_wc.png'.
+        stopword_extsn (iterable, optional): List of additional stopwords beyond NLTK's
+            'stopwords' list to remove from corpus. Defaults to None.
+        show_wc (bool, optional): Enables inline display of WordCLoud. Defaults to True.
+        show_fd (bool, optional): Enables FreqDist plotting. Defaults to True.
+        keep_fd (bool, optional): Enables output of nltk.FreqDist() object. Defaults to False.
+
+    Returns:
+        str: Displays visuals from '' and '' prints string denoting the codes completion. Optional
+             return of nltk.FreqDist() object.
+    """
     
     #### MAKING TOP-N GRAPH
     
