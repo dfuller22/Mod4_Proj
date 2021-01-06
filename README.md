@@ -1,10 +1,3 @@
-# Final Project Submission
-
-Please fill out:
-* Student name: **Darius Fuller**
-* Student pace: self paced / **part time** / full time
-* Scheduled project review date/time: **TBD**
-* Instructor name: **James Irving**
 * Blog post URL: **https://medium.com/@d_full22/getting-sentimental-2db354e833bc**
 
 # The Problem
@@ -560,7 +553,7 @@ plt.show();
 ```
 
 
-![png](Module_4_Project_files/Module_4_Project_46_0.png)
+![png](Images/Module_4_Project_46_0.png)
 
 
 > Since this is ultimately a classification problem, I will make use of the `classification_report` and `confusion_matrix` functions from Sklearn's metrics module to display and visualize my model's perfomance.
@@ -601,7 +594,7 @@ dlf.plot_confusion_matrix(cm, labels)
     
 
 
-![png](Module_4_Project_files/Module_4_Project_48_1.png)
+![png](Images/Module_4_Project_48_1.png)
 
 
 > **62% accuracy** is a good start! The plots definitely show evidence of *overfitting*, as the validation accuracy is much lower (and fluctuating) while the training accuracy and validation loss continue to increase.
@@ -949,7 +942,7 @@ dlf.evaluate_model(model_w2v_twt, X_tr_seq_cln_smt, X_te_seq_cln, y_tr_cln_smt, 
     
 
 
-![png](Module_4_Project_files/Module_4_Project_73_3.png)
+![png](Images/Module_4_Project_73_3.png)
 
 
     ------------------------------------------------------------
@@ -958,7 +951,7 @@ dlf.evaluate_model(model_w2v_twt, X_tr_seq_cln_smt, X_te_seq_cln, y_tr_cln_smt, 
     
 
 
-![png](Module_4_Project_files/Module_4_Project_73_5.png)
+![png](Images/Module_4_Project_73_5.png)
 
 
     ------------------------------------------------------------
@@ -1129,7 +1122,7 @@ dlf.evaluate_model(model_glve_twt, X_tr_seq_cln_smt, X_te_seq_cln, y_tr_cln_smt,
     
 
 
-![png](Module_4_Project_files/Module_4_Project_82_3.png)
+![png](Images/Module_4_Project_82_3.png)
 
 
     ------------------------------------------------------------
@@ -1138,7 +1131,7 @@ dlf.evaluate_model(model_glve_twt, X_tr_seq_cln_smt, X_te_seq_cln, y_tr_cln_smt,
     
 
 
-![png](Module_4_Project_files/Module_4_Project_82_5.png)
+![png](Images/Module_4_Project_82_5.png)
 
 
     ------------------------------------------------------------
@@ -1311,7 +1304,7 @@ dlf.evaluate_model(model_fin, X_tr_seq_cln_smt, X_te_seq_cln, y_tr_cln_smt, y_te
     
 
 
-![png](Module_4_Project_files/Module_4_Project_90_1.png)
+![png](Images/Module_4_Project_90_1.png)
 
 
     ------------------------------------------------------------
@@ -1320,7 +1313,7 @@ dlf.evaluate_model(model_fin, X_tr_seq_cln_smt, X_te_seq_cln, y_tr_cln_smt, y_te
     
 
 
-![png](Module_4_Project_files/Module_4_Project_90_3.png)
+![png](Images/Module_4_Project_90_3.png)
 
 
     ------------------------------------------------------------
