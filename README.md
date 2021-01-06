@@ -1,4 +1,4 @@
-* Blog post URL: **https://medium.com/@d_full22/getting-sentimental-2db354e833bc**
+Blog post URL: **https://medium.com/@d_full22/getting-sentimental-2db354e833bc**
 
 # The Problem
 
